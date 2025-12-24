@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Electronics",
+    "name_ar": "إلكترونيات",
+    "icon": "laptop",
+    "children": [
+      { "id": 11, "name": "Laptops", "name_ar": "حواسيب محمولة", "icon": "laptop" },
+      { "id": 12, "name": "Phones", "name_ar": "هواتف", "icon": "smartphone" },
+      { "id": 13, "name": "Tablets", "name_ar": "لوحات", "icon": "tablet" },
+      { "id": 14, "name": "Accessories", "name_ar": "ملحقات", "icon": "headphones" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Books & Education",
+    "name_ar": "كتب وتعليم",
+    "icon": "book-open",
+    "children": [
+      { "id": 21, "name": "Textbooks", "name_ar": "كتب دراسية", "icon": "book" },
+      { "id": 22, "name": "Courses", "name_ar": "دورات", "icon": "graduation-cap" },
+      { "id": 23, "name": "Tutoring", "name_ar": "دروس خصوصية", "icon": "users" }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Clothing",
+    "name_ar": "ملابس",
+    "icon": "shirt",
+    "children": [
+      { "id": 31, "name": "Men", "name_ar": "رجال", "icon": "user" },
+      { "id": 32, "name": "Women", "name_ar": "نساء", "icon": "user" },
+      { "id": 33, "name": "Shoes", "name_ar": "أحذية", "icon": "footprints" }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Services",
+    "name_ar": "خدمات",
+    "icon": "briefcase",
+    "children": [
+      { "id": 41, "name": "Transport", "name_ar": "نقل", "icon": "car" },
+      { "id": 42, "name": "Delivery", "name_ar": "توصيل", "icon": "package" },
+      { "id": 43, "name": "Repairs", "name_ar": "إصلاحات", "icon": "wrench" }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Food & Drinks",
+    "name_ar": "طعام ومشروبات",
+    "icon": "utensils",
+    "children": [
+      { "id": 51, "name": "Restaurants", "name_ar": "مطاعم", "icon": "utensils" },
+      { "id": 52, "name": "Cafes", "name_ar": "مقاهي", "icon": "coffee" },
+      { "id": 53, "name": "Grocery", "name_ar": "بقالة", "icon": "shopping-basket" }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Sports & Leisure",
+    "name_ar": "رياضة وترفيه",
+    "icon": "dumbbell",
+    "children": [
+      { "id": 61, "name": "Equipment", "name_ar": "معدات", "icon": "dumbbell" },
+      { "id": 62, "name": "Tickets", "name_ar": "تذاكر", "icon": "ticket" }
+    ]
+  }
+]
