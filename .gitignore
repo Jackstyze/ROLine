@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Mac files
+._*
+.DS_Store
+
+# Design files (not needed in repo)
+**/FIGMA DESIGN/
+**/Vista Logos/
