@@ -22,19 +22,25 @@ export const metadata = {
 }
 
 const QUICK_ACTIONS = [
-  { href: '/marketplace', icon: Store, label: 'Marketplace', desc: 'Découvrir les produits', color: 'emerald', forMerchant: false },
-  { href: '/orders', icon: Package, label: 'Mes commandes', desc: 'Suivre vos achats', color: 'emerald', forMerchant: false },
-  { href: '/sell', icon: Sparkles, label: 'Vendre', desc: 'Publier un produit', color: 'red', forMerchant: true },
-  { href: '/dashboard/coupons/new', icon: Tag, label: 'Coupons', desc: 'Créer des promos', color: 'red', forMerchant: true },
-  { href: '/dashboard/events/new', icon: Calendar, label: 'Événements', desc: 'Créer un événement', color: 'emerald', forMerchant: true },
-  { href: '/profile', icon: User, label: 'Mon profil', desc: 'Gérer vos infos', color: 'emerald', forMerchant: false },
+  { href: '/marketplace', icon: Store, label: 'Marketplace', desc: 'Découvrir les produits', color: 'emerald', forMerchant: false, forStudent: false },
+  { href: '/orders', icon: Package, label: 'Mes commandes', desc: 'Suivre vos achats', color: 'emerald', forMerchant: false, forStudent: false },
+  { href: '/sell', icon: Sparkles, label: 'Vendre', desc: 'Publier un produit', color: 'red', forMerchant: true, forStudent: false },
+  { href: '/dashboard/coupons/new', icon: Tag, label: 'Coupons', desc: 'Créer des promos', color: 'red', forMerchant: true, forStudent: false },
+  { href: '/dashboard/events/new', icon: Calendar, label: 'Événements', desc: 'Créer un événement', color: 'emerald', forMerchant: true, forStudent: false },
+  { href: '/profile/coupons', icon: Tag, label: 'Mes coupons', desc: 'Coupons sauvegardés', color: 'red', forMerchant: false, forStudent: true },
+  { href: '/profile/events', icon: Calendar, label: 'Mes événements', desc: 'Événements inscrits', color: 'emerald', forMerchant: false, forStudent: true },
+  { href: '/profile', icon: User, label: 'Mon profil', desc: 'Gérer vos infos', color: 'emerald', forMerchant: false, forStudent: false },
 ]
 
 export default async function DashboardPage() {
   const user = await getCurrentUser()
   const isMerchant = user?.profile?.role === 'merchant'
 
-  const actions = QUICK_ACTIONS.filter(action => !action.forMerchant || isMerchant)
+  const actions = QUICK_ACTIONS.filter(action => {
+    if (action.forMerchant && !isMerchant) return false
+    if (action.forStudent && isMerchant) return false
+    return true
+  })
 
   return (
     <div className="space-y-8">

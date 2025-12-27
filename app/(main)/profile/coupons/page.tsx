@@ -51,30 +51,32 @@ export default async function MesCouponsPage() {
       {/* Header */}
       <div className="mb-8">
         <Link
-          href="/profile"
-          className="text-sm text-gray-500 hover:text-gray-700"
+          href="/dashboard"
+          className="text-sm text-green-700 hover:text-green-800 font-medium"
         >
-          ← Retour au profil
+          ← Retour au dashboard
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">
-          Mes Coupons
-        </h1>
-        <p className="text-gray-600">
-          Retrouvez tous vos coupons sauvegardés
-        </p>
+        <div className="glass rounded-2xl p-6 mt-4 relative overflow-hidden">
+          <div className="absolute inset-0 algerian-pattern opacity-[0.03]" />
+          <div className="relative flex items-center gap-3">
+            <div className="w-1 h-8 bg-gradient-to-b from-red-400 to-red-600 rounded-full" />
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Mes Coupons</h1>
+              <p className="text-muted-foreground">Retrouvez tous vos coupons sauvegardés</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Quick link to discover offers */}
-      <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+      <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-purple-800">
-              Decouvrez plus d'offres dans le marketplace
-            </p>
-          </div>
+          <p className="text-sm text-red-800">
+            Découvrez plus d'offres dans le marketplace
+          </p>
           <Link
-            href="/marketplace?view=offers"
-            className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700"
+            href="/marketplace?tab=offers"
+            className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-medium rounded-xl hover:shadow-lg transition-all"
           >
             Voir les offres
           </Link>
