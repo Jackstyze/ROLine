@@ -49,9 +49,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     <div className="max-w-6xl mx-auto">
       {/* Breadcrumb */}
       <nav className="mb-6 text-sm">
-        <ol className="flex items-center gap-2 text-gray-500">
+        <ol className="flex items-center gap-2 text-muted-foreground">
           <li>
-            <Link href="/marketplace" className="hover:text-gray-700">
+            <Link href="/marketplace" className="hover:text-green-700">
               Marketplace
             </Link>
           </li>
@@ -61,7 +61,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               <li>
                 <Link
                   href={`/marketplace?category=${product.category.id}`}
-                  className="hover:text-gray-700"
+                  className="hover:text-green-700"
                 >
                   {product.category.name}
                 </Link>
@@ -69,7 +69,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               <li>/</li>
             </>
           )}
-          <li className="text-gray-900 truncate">{product.title}</li>
+          <li className="text-foreground truncate">{product.title}</li>
         </ol>
       </nav>
 
@@ -77,7 +77,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         {/* Images */}
         <div className="space-y-4">
           {/* Main image */}
-          <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+          <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden shadow-lg">
             {product.images && product.images.length > 0 ? (
               <Image
                 src={product.images[0]}
@@ -190,17 +190,17 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
           {/* Seller */}
           {product.merchant && (
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-600 font-bold text-lg">
+            <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-full flex items-center justify-center">
+                <span className="text-emerald-700 font-bold text-lg">
                   {product.merchant.full_name?.charAt(0) || '?'}
                 </span>
               </div>
               <div>
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-foreground">
                   {product.merchant.full_name || 'Vendeur'}
                 </p>
-                <p className="text-sm text-gray-500">Vendeur</p>
+                <p className="text-sm text-muted-foreground">Vendeur</p>
               </div>
             </div>
           )}
@@ -223,7 +223,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   isLoggedIn={!!user}
                 />
                 <button
-                  className="w-full py-3 px-4 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-medium rounded-xl hover:shadow-lg transition-all"
                   type="button"
                 >
                   Acheter maintenant

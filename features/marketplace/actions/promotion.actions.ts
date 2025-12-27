@@ -104,10 +104,12 @@ export async function createPromotionPurchase(
     return failure(`Erreur création: ${purchaseError.message}`)
   }
 
-  // MVP Demo mode: auto-activate when Chargily not configured
+  // MVP Demo mode: auto-activate promotion (bypass payment for testing)
+  // TODO: Enable real Chargily payment when ready
+  const DEMO_MODE = true // Set to false to enable real payment
   const chargilyApiKey = process.env.CHARGILY_API_KEY
 
-  if (!chargilyApiKey) {
+  if (DEMO_MODE || !chargilyApiKey) {
     const pkgTyped = pkg as { tier: string; duration_days: number }
     const purchaseTyped = purchase as { id: string }
     await activatePromotion(itemId, itemType, pkgTyped.tier, pkgTyped.duration_days, purchaseTyped.id)

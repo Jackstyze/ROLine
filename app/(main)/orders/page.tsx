@@ -42,23 +42,30 @@ export default async function OrdersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Mes Commandes</h1>
-        <p className="text-gray-600">Suivez vos achats et ventes</p>
+      {/* Header */}
+      <div className="glass rounded-2xl p-6 relative overflow-hidden">
+        <div className="absolute inset-0 algerian-pattern opacity-[0.03]" />
+        <div className="relative flex items-center gap-3">
+          <div className="w-1 h-8 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full" />
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Mes Commandes</h1>
+            <p className="text-muted-foreground">Suivez vos achats et ventes</p>
+          </div>
+        </div>
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <div className="glass rounded-2xl p-12 text-center">
           <span className="text-5xl mb-4 block">📦</span>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-foreground mb-2">
             Aucune commande
           </h3>
-          <p className="text-gray-500 mb-6">
+          <p className="text-muted-foreground mb-6">
             Vous n&apos;avez pas encore passé de commande.
           </p>
           <Link
             href="/marketplace"
-            className="inline-block py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-block py-3 px-6 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl font-medium hover:shadow-lg transition-all"
           >
             Explorer le marketplace
           </Link>
@@ -72,7 +79,7 @@ export default async function OrdersPage() {
             return (
               <div
                 key={order.id}
-                className="bg-white rounded-lg border border-gray-200 p-6"
+                className="glass rounded-2xl p-6 hover:shadow-lg transition-all"
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                   {/* Product image */}
@@ -136,7 +143,7 @@ export default async function OrdersPage() {
                 <div className="mt-4 pt-4 border-t border-gray-100 flex gap-3">
                   <Link
                     href={`/orders/${order.id}`}
-                    className="text-sm text-blue-600 hover:text-blue-700"
+                    className="text-sm text-green-700 hover:text-green-800 font-medium"
                   >
                     Voir détails
                   </Link>

@@ -66,7 +66,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       {/* Back link */}
       <Link
         href="/orders"
-        className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+        className="inline-flex items-center text-sm text-green-700 hover:text-green-800 font-medium"
       >
         ← Retour aux commandes
       </Link>
@@ -84,7 +84,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       )}
 
       {/* Order header */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="glass rounded-2xl p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
             <h1 className="text-xl font-bold text-gray-900">
@@ -115,7 +115,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
           <div>
             <Link
               href={`/marketplace/${order.product_id}`}
-              className="font-medium text-gray-900 hover:text-blue-600"
+              className="font-medium text-foreground hover:text-green-700"
             >
               {order.product?.title || 'Produit'}
             </Link>
@@ -184,8 +184,8 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
 
       {/* Payment section for buyer */}
       {needsPayment && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="glass rounded-2xl p-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">
             Finaliser le paiement
           </h2>
           <PayButton orderId={order.id} amount={order.total_amount} />

@@ -3,7 +3,9 @@ import { Suspense } from 'react'
 import { createSupabaseServer } from '@/shared/lib/supabase/server'
 import { Button } from '@/shared/components/ui/button'
 import { Badge } from '@/shared/components/ui/badge'
-import { ArrowRight, Sparkles, TrendingUp, Users, ShieldCheck, Truck, MessageCircle, CreditCard } from 'lucide-react'
+import { ArrowRight, Sparkles, TrendingUp, Users, ShieldCheck, Truck, MessageCircle, CreditCard, Search, Star, Flame } from 'lucide-react'
+import { PromoBanner } from './components/PromoBanner'
+import { HeroCarousel } from './components/HeroCarousel'
 
 const CATEGORIES = [
   { id: 1, name: 'Électronique', nameAr: 'إلكترونيات', icon: '💻' },
@@ -15,10 +17,10 @@ const CATEGORIES = [
 ]
 
 const TRUST_SIGNALS = [
-  { icon: CreditCard, title: 'Paiement sécurisé', desc: 'Edahabia, CIB, Cash', color: 'emerald' },
-  { icon: ShieldCheck, title: 'Vendeurs vérifiés', desc: 'Profils authentifiés', color: 'red' },
-  { icon: Truck, title: '69 Wilayas', desc: 'Livraison nationale', color: 'emerald' },
-  { icon: MessageCircle, title: 'Support 24/7', desc: 'On est là pour toi', color: 'red' },
+  { icon: ShieldCheck, title: 'Paiement Sécurisé', desc: 'Transactions 100% protégées', color: 'green' },
+  { icon: Truck, title: 'Livraison Rapide', desc: 'Partout en Algérie', color: 'green' },
+  { icon: CreditCard, title: 'Paiement Flexible', desc: 'CCP, Baridimob, Espèces', color: 'green' },
+  { icon: MessageCircle, title: 'Support 24/7', desc: 'Service client réactif', color: 'green' },
 ]
 
 type FeaturedProduct = {
@@ -46,15 +48,20 @@ async function FeaturedProducts() {
 
   if (products.length === 0) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-gray-100">
-            <div className="aspect-square bg-gradient-to-br from-emerald-50 via-white to-red-50 flex items-center justify-center">
-              <span className="text-5xl">{['💻', '📚', '👕', '📱'][i - 1]}</span>
+          <div key={i} className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+            <div className="aspect-square bg-gradient-to-br from-green-50 to-gray-50 flex items-center justify-center relative">
+              <span className="text-6xl">{['💻', '📚', '👕', '📱'][i - 1]}</span>
             </div>
-            <div className="p-4 border-t border-gray-100">
-              <p className="text-sm text-muted-foreground">Bientôt disponible</p>
-              <p className="font-bold text-primary">---.-- DA</p>
+            <div className="p-4">
+              <h4 className="font-medium text-gray-800 mb-2">Bientôt disponible</h4>
+              <div className="flex items-center gap-1 mb-3">
+                {[...Array(5)].map((_, j) => (
+                  <Star key={j} className="w-4 h-4 text-gray-300" />
+                ))}
+              </div>
+              <p className="text-2xl font-bold text-green-700">---.-- DA</p>
             </div>
           </div>
         ))}
@@ -63,33 +70,62 @@ async function FeaturedProducts() {
   }
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {products.map((product) => (
         <Link
           key={product.id}
           href={`/marketplace/${product.id}`}
-          className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 hover:border-emerald-200"
+          className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
         >
-          <div className="aspect-square bg-gray-50 relative overflow-hidden">
+          {/* Image */}
+          <div className="aspect-square bg-gray-100 relative overflow-hidden">
             {product.images?.[0] ? (
-              <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-4xl bg-gradient-to-br from-emerald-50 to-gray-50">📦</div>
+              <div className="w-full h-full flex items-center justify-center text-5xl bg-gradient-to-br from-green-50 to-gray-50">📦</div>
             )}
-            {product.original_price && (
-              <Badge className="absolute top-3 left-3 bg-red-500 hover:bg-red-600 text-white border-none">
-                -{Math.round((1 - product.price / product.original_price) * 100)}%
-              </Badge>
-            )}
+
+            {/* Badges */}
+            <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
+              <div className="flex gap-2">
+                {product.original_price && (
+                  <Badge className="bg-green-600 text-white border-none shadow-lg">
+                    -{Math.round((1 - product.price / product.original_price) * 100)}%
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            {/* Quick view overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-green-700/95 via-green-700/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-4">
+              <Button className="bg-white text-green-700 hover:bg-green-50 w-full rounded-xl">
+                Voir Détails
+              </Button>
+            </div>
           </div>
+
+          {/* Content */}
           <div className="p-4">
-            <p className="text-sm text-muted-foreground truncate">{(product.wilayas as { name: string } | null)?.name}</p>
-            <h3 className="font-medium text-foreground truncate">{product.title}</h3>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="font-bold text-primary">{product.price.toLocaleString()} DA</span>
+            <h4 className="line-clamp-2 mb-2 text-gray-800 min-h-[3rem] font-medium">
+              {product.title}
+            </h4>
+
+            <div className="flex items-center gap-1 mb-3">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className={`w-4 h-4 ${i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+              ))}
+              <span className="text-sm text-gray-600">(4.5)</span>
+            </div>
+
+            <div className="flex items-baseline gap-2 mb-3">
+              <span className="text-2xl font-bold text-green-700">{product.price.toLocaleString()} DA</span>
               {product.original_price && (
-                <span className="text-sm text-muted-foreground line-through">{product.original_price.toLocaleString()}</span>
+                <span className="text-sm text-gray-400 line-through">{product.original_price.toLocaleString()}</span>
               )}
+            </div>
+
+            <div className="pt-3 border-t border-gray-100 text-sm text-gray-600">
+              📍 {(product.wilayas as { name: string } | null)?.name || 'Algérie'}
             </div>
           </div>
         </Link>
@@ -118,47 +154,37 @@ function FeaturedLoading() {
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Promo Banner */}
-      <div className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white text-center py-2.5 text-sm font-medium">
-        <span className="animate-pulse mr-2">★</span>
-        Livraison gratuite pour ta première commande!
-        <span className="animate-pulse ml-2">★</span>
-      </div>
+      {/* Top Promo Banner - Figma Style with close button */}
+      <PromoBanner />
 
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b-4 border-red-500 shadow-sm">
+      {/* Navigation - Figma Style */}
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b-4 border-red-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <span className="text-white font-bold">RO</span>
-              </div>
-              <div>
-                <span className="text-xl font-bold text-foreground">Line</span>
-                <span className="hidden sm:inline text-xs text-red-500 ml-1 font-bold">DZ</span>
-              </div>
+            <Link href="/" className="flex items-center">
+              <img src="/logos/colored-logo.png" alt="RO Line" className="h-10 w-auto" />
             </Link>
 
-            {/* Search Bar */}
-            <div className="hidden md:flex flex-1 max-w-xl mx-8">
+            {/* Search Bar - Figma Style */}
+            <div className="hidden md:flex flex-1 max-w-2xl mx-8">
               <div className="relative w-full">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Rechercher un produit..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-100 text-foreground placeholder-muted-foreground border border-gray-200 rounded-full text-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 focus:bg-white transition-all"
+                  placeholder="Chercher des livres, cours, matériel..."
+                  className="w-full pl-12 pr-4 py-3 bg-white text-foreground placeholder-gray-400 border-2 border-green-600/30 rounded-full text-sm focus:outline-none focus:border-green-600 shadow-sm transition-all"
                 />
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">🔍</span>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <Link href="/marketplace" className="hidden sm:block text-muted-foreground hover:text-primary font-medium text-sm transition-colors">
+              <Link href="/marketplace" className="hidden sm:block text-gray-600 hover:text-green-700 font-medium text-sm transition-colors">
                 Explorer
               </Link>
-              <Link href="/login" className="text-muted-foreground hover:text-primary font-medium text-sm transition-colors">
+              <Link href="/login" className="text-gray-600 hover:text-green-700 font-medium text-sm transition-colors">
                 Connexion
               </Link>
-              <Button asChild className="rounded-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/20">
+              <Button asChild className="rounded-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg">
                 <Link href="/register">S&apos;inscrire</Link>
               </Button>
             </div>
@@ -166,10 +192,10 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section with Algerian Pattern & Wave Divider */}
-      <section className="relative min-h-[650px] lg:min-h-[700px] overflow-hidden">
-        {/* Green gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-700">
+      {/* Hero Section - Figma Style */}
+      <section className="relative min-h-[700px] lg:min-h-[780px] overflow-hidden">
+        {/* Green gradient background - Figma colors */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-600 via-green-700 to-green-800">
           {/* Algerian Pattern Overlay */}
           <div className="absolute inset-0 algerian-pattern opacity-30" />
           {/* Radial gradients */}
@@ -181,134 +207,60 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="text-white">
-              <Badge className="mb-6 bg-white/20 backdrop-blur-sm text-white border-white/40 px-4 py-2 hover:bg-white/30">
-                <Sparkles className="w-4 h-4 mr-2 inline" />
-                Paiement Edahabia & CIB
-              </Badge>
+              <div className="mb-6 flex justify-center -ml-[10%] -mt-[20%]">
+                <img src="/logos/transparent-logo.png" alt="RO Line" className="h-96 sm:h-[28rem] lg:h-[32rem] w-auto drop-shadow-lg" />
+              </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                Marketplace des{' '}
-                <span className="relative inline-block text-yellow-300">
-                  étudiants
-                  <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 200 12" fill="none">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 text-center -ml-[10%] -mt-[20%]">
+                Le marketplace{' '}
+                <span className="text-yellow-300 relative inline-block">
+                  DZtudiants
+                  <svg className="absolute -bottom-1 left-0 w-full" height="8" viewBox="0 0 200 12" fill="none">
                     <path d="M2 9C60 3 140 3 198 9" stroke="#FCD34D" strokeWidth="3" strokeLinecap="round"/>
                   </svg>
                 </span>
-                <span className="block text-white/90">algériens</span>
               </h1>
 
-              <p className="text-lg text-emerald-50/90 mb-8 max-w-md">
-                Achète et vends entre étudiants. Livres, électronique, vêtements dans les 69 wilayas.
-              </p>
-
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                <Button asChild size="lg" className="bg-white text-emerald-700 hover:bg-emerald-50 rounded-full shadow-xl hover:shadow-2xl h-14 px-8">
+                <Button asChild size="lg" className="bg-white text-green-700 hover:bg-green-50 rounded-full shadow-xl hover:shadow-2xl h-14 px-8 text-lg">
                   <Link href="/marketplace">
-                    Explorer maintenant
+                    Commencer maintenant
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 rounded-full h-14 px-8">
-                  <Link href="/register?role=merchant">Vendre</Link>
+                <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 rounded-full h-14 px-8 text-lg">
+                  <Link href="/register?role=merchant">Comment ça marche?</Link>
                 </Button>
               </div>
 
-              {/* Stats */}
+              {/* Stats - Figma Style */}
               <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Users className="w-5 h-5 text-yellow-300" />
-                    <div className="text-3xl font-bold">69</div>
+                    <div className="text-3xl font-bold">50K+</div>
                   </div>
-                  <div className="text-emerald-100 text-sm">Wilayas</div>
+                  <div className="text-green-100 text-sm">Étudiants actifs</div>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <TrendingUp className="w-5 h-5 text-yellow-300" />
-                    <div className="text-3xl font-bold text-red-300">0%</div>
+                    <div className="text-3xl font-bold">200K+</div>
                   </div>
-                  <div className="text-emerald-100 text-sm">Commission</div>
+                  <div className="text-green-100 text-sm">Produits vendus</div>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Sparkles className="w-5 h-5 text-yellow-300" />
-                    <div className="text-3xl font-bold">24/7</div>
+                    <div className="text-3xl font-bold">4.9/5</div>
                   </div>
-                  <div className="text-emerald-100 text-sm">Support</div>
+                  <div className="text-green-100 text-sm">Satisfaction</div>
                 </div>
               </div>
             </div>
 
-            {/* Right - Floating Cards */}
-            <div className="hidden lg:block relative">
-              <div className="relative">
-                {/* Decorative blurs */}
-                <div className="absolute -top-6 -right-6 w-72 h-72 bg-yellow-300 rounded-full opacity-20 blur-3xl" />
-                <div className="absolute -bottom-6 -left-6 w-72 h-72 bg-red-500 rounded-full opacity-20 blur-3xl" />
-
-                {/* Main glassmorphism card */}
-                <div className="glass rounded-3xl p-8 relative">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <span className="w-4 h-4 bg-red-500 rounded-full animate-pulse" />
-                      <h3 className="text-xl font-bold text-foreground">Offres du moment</h3>
-                    </div>
-                    <Link href="/marketplace" className="text-primary font-semibold hover:text-emerald-700 transition-colors flex items-center gap-1">
-                      Voir tout <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </div>
-
-                  {/* Product grid inside card */}
-                  <div className="grid grid-cols-2 gap-4">
-                    {[
-                      { icon: '💻', name: 'MacBook Pro M2', price: '185,000', location: 'Alger', discount: '-15%' },
-                      { icon: '📚', name: 'Pack Médecine', price: '4,500', location: 'Oran', discount: null },
-                      { icon: '👕', name: 'Veste Nike Air', price: '6,000', location: 'Constantine', discount: '-20%' },
-                      { icon: '📱', name: 'iPhone 14 Pro', price: '145,000', location: 'Blida', discount: null },
-                    ].map((item, i) => (
-                      <div key={i} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 hover:shadow-lg hover:bg-emerald-50/80 transition-all duration-300 cursor-pointer group border border-white/60 hover:border-emerald-200">
-                        <div className="flex justify-between items-start mb-2">
-                          <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
-                          {item.discount && (
-                            <Badge className="bg-red-500 hover:bg-red-600 text-white border-none text-xs">
-                              {item.discount}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="font-semibold text-foreground truncate text-sm mb-1">{item.name}</p>
-                        <p className="text-xs text-muted-foreground mb-1">📍 {item.location}</p>
-                        <p className="font-bold text-primary">{item.price} DA</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Floating notification cards */}
-                <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-4 animate-float">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                      <span className="text-2xl">📚</span>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Livre vendu</div>
-                      <div className="font-bold text-emerald-600">+2,500 DA</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-xl p-4 animate-float-delayed">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <span className="text-2xl">🎯</span>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Nouvelle offre</div>
-                      <div className="font-bold text-red-600">-40% Promo!</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Right - Offers Carousel - Interactive Client Component */}
+            <HeroCarousel />
           </div>
         </div>
 
@@ -320,25 +272,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trust Signals */}
-      <section className="py-10 bg-white">
+      {/* Trust Signals - Figma Style */}
+      <section className="py-6 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {TRUST_SIGNALS.map((signal, i) => {
               const Icon = signal.icon
               return (
-                <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    signal.color === 'emerald'
-                      ? 'bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600'
-                      : 'bg-gradient-to-br from-red-100 to-red-50 text-red-600'
-                  }`}>
-                    <Icon className="w-6 h-6" />
+                <div key={i} className="flex flex-col items-center text-center p-6 rounded-2xl hover:bg-green-50 transition-colors group">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Icon className="w-8 h-8 text-green-700" />
                   </div>
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">{signal.title}</p>
-                    <p className="text-muted-foreground text-xs">{signal.desc}</p>
-                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-1">{signal.title}</h3>
+                  <p className="text-sm text-gray-600">{signal.desc}</p>
                 </div>
               )
             })}
@@ -346,52 +292,50 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+      {/* Categories - Figma Style */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-1.5 h-10 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full" />
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Catégories</h2>
-                <p className="text-muted-foreground text-sm">Trouve ce que tu cherches</p>
-              </div>
-            </div>
-            <Button asChild variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50">
-              <Link href="/marketplace">Voir tout →</Link>
-            </Button>
+          <div className="text-center mb-6">
+            <h2 className="text-4xl font-bold text-gray-800 mb-3">Explorer par Catégorie</h2>
+            <p className="text-xl text-gray-600">Trouve exactement ce que tu cherches</p>
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-5">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 md:gap-6">
             {CATEGORIES.map((cat, i) => (
               <Link key={cat.id} href={`/marketplace?category=${cat.id}`} className="group text-center">
-                <div className={`aspect-square rounded-2xl flex items-center justify-center text-4xl mb-3 transition-all duration-300 ${
+                <div className={`aspect-square rounded-2xl flex items-center justify-center text-4xl mb-3 transition-all duration-300 border-2 border-transparent group-hover:border-green-600 group-hover:shadow-2xl ${
                   i % 2 === 0
-                    ? 'bg-gradient-to-br from-emerald-50 to-emerald-100/50 group-hover:from-emerald-100 group-hover:to-emerald-200/50 group-hover:shadow-lg group-hover:shadow-emerald-500/10'
-                    : 'bg-gradient-to-br from-red-50 to-red-100/50 group-hover:from-red-100 group-hover:to-red-200/50 group-hover:shadow-lg group-hover:shadow-red-500/10'
-                } group-hover:scale-105`}>
-                  {cat.icon}
+                    ? 'bg-gradient-to-br from-green-500 to-green-600'
+                    : 'bg-gradient-to-br from-red-500 to-red-600'
+                } group-hover:scale-110`}>
+                  <span className="filter drop-shadow-lg">{cat.icon}</span>
                 </div>
-                <p className="font-semibold text-foreground text-sm">{cat.name}</p>
-                <p className="text-muted-foreground text-xs">{cat.nameAr}</p>
+                <p className="font-semibold text-gray-800 group-hover:text-green-700 transition-colors">{cat.name}</p>
+                <p className="text-gray-500 text-xs">{cat.nameAr}</p>
               </Link>
             ))}
+          </div>
+
+          <div className="text-center mt-6">
+            <Button asChild variant="outline" className="border-2 border-green-600 text-green-700 hover:bg-green-600 hover:text-white rounded-full px-8">
+              <Link href="/marketplace">Voir toutes les catégories</Link>
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      {/* Featured Products - Figma Style */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-1.5 h-10 bg-gradient-to-b from-red-400 to-red-600 rounded-full" />
-              <div>
-                <Badge className="mb-1 bg-red-500 hover:bg-red-600 text-white border-none">NEW</Badge>
-                <h2 className="text-2xl font-bold text-foreground">Dernières annonces</h2>
-              </div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+                <Flame className="w-10 h-10 text-red-600" />
+                Produits en Vedette
+              </h2>
+              <p className="text-xl text-gray-600">Les meilleures offres du moment</p>
             </div>
-            <Button asChild className="rounded-full">
+            <Button asChild variant="outline" className="border-2 border-green-600 text-green-700 hover:bg-green-600 hover:text-white rounded-full hidden md:flex">
               <Link href="/marketplace">Voir tout</Link>
             </Button>
           </div>
@@ -402,34 +346,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it Works */}
-      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-white">
+      {/* How it Works - Figma Style */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Comment ça marche?</h2>
-            <p className="text-muted-foreground">Vendre sur RO Line en 4 étapes</p>
+          <div className="text-center mb-6">
+            <h2 className="text-4xl font-bold text-gray-800 mb-3">Comment ça marche?</h2>
+            <p className="text-xl text-gray-600">Vendre sur RO Line en 4 étapes simples</p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { step: '01', icon: '📝', title: 'Inscris-toi', desc: 'Compte gratuit', color: 'emerald' },
+              { step: '01', icon: '📝', title: 'Inscris-toi', desc: 'Compte gratuit en 30 sec', color: 'green' },
               { step: '02', icon: '📸', title: 'Publie', desc: 'Photos + description', color: 'red' },
-              { step: '03', icon: '💬', title: 'Échange', desc: 'Chat avec acheteurs', color: 'emerald' },
+              { step: '03', icon: '💬', title: 'Échange', desc: 'Chat avec acheteurs', color: 'green' },
               { step: '04', icon: '✅', title: 'Vends', desc: 'Reçois ton argent', color: 'red' },
             ].map((item, i) => (
               <div key={i} className="relative">
                 {i < 3 && (
-                  <div className="hidden lg:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-gray-200 to-transparent" />
+                  <div className="hidden lg:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-gray-300 to-transparent" />
                 )}
-                <div className={`rounded-2xl p-6 transition-all hover:shadow-lg ${
-                  item.color === 'emerald'
-                    ? 'bg-gradient-to-br from-emerald-50 to-emerald-100/30 hover:shadow-emerald-500/10'
-                    : 'bg-gradient-to-br from-red-50 to-red-100/30 hover:shadow-red-500/10'
+                <div className={`rounded-2xl p-6 transition-all hover:shadow-xl hover:-translate-y-1 ${
+                  item.color === 'green'
+                    ? 'bg-gradient-to-br from-green-50 to-green-100/50 hover:shadow-green-500/20'
+                    : 'bg-gradient-to-br from-red-50 to-red-100/50 hover:shadow-red-500/20'
                 }`}>
-                  <div className={`text-4xl font-black mb-3 ${item.color === 'emerald' ? 'text-emerald-200' : 'text-red-200'}`}>{item.step}</div>
-                  <div className="text-4xl mb-3">{item.icon}</div>
-                  <h3 className="font-bold text-foreground mb-1">{item.title}</h3>
-                  <p className="text-muted-foreground text-sm">{item.desc}</p>
+                  <div className={`text-5xl font-black mb-3 ${item.color === 'green' ? 'text-green-200' : 'text-red-200'}`}>{item.step}</div>
+                  <div className="text-5xl mb-3">{item.icon}</div>
+                  <h3 className="font-bold text-gray-800 text-lg mb-1">{item.title}</h3>
+                  <p className="text-gray-600">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -437,82 +381,161 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="rounded-3xl overflow-hidden shadow-2xl shadow-emerald-500/10">
-            <div className="grid md:grid-cols-2">
-              <div className="bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 p-8 sm:p-12 text-white relative overflow-hidden">
-                <div className="absolute inset-0 algerian-pattern opacity-20" />
-                <div className="relative">
-                  <h2 className="text-3xl sm:text-4xl font-bold mb-4">Rejoins la communauté</h2>
-                  <p className="text-emerald-100 mb-6">Des milliers d&apos;étudiants algériens achètent et vendent déjà sur RO Line</p>
-                  <Button asChild size="lg" className="bg-white text-emerald-700 hover:bg-emerald-50 rounded-full">
-                    <Link href="/register">Créer mon compte</Link>
-                  </Button>
-                </div>
-              </div>
-              <div className="bg-white p-8 sm:p-12 flex flex-col justify-center relative">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-red-400 to-red-600" />
-                <div className="text-6xl mb-4 text-red-400">★</div>
-                <p className="text-muted-foreground mb-4">Tu as déjà un compte?</p>
-                <Button asChild size="lg" className="w-fit rounded-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700">
-                  <Link href="/login">Se connecter</Link>
+      {/* CTA Section - Full Figma Design (reduced height) */}
+      <section className="py-12 bg-gradient-to-br from-green-600 via-green-700 to-red-600 relative overflow-hidden">
+        {/* Decorative patterns */}
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full">
+            <defs>
+              <pattern id="ctaPattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                <path d="M 30 10 L 40 20 L 50 10 L 50 20 L 40 30 L 50 40 L 50 50 L 40 40 L 30 50 L 20 40 L 10 50 L 10 40 L 20 30 L 10 20 L 10 10 L 20 20 Z" fill="white" />
+                <circle cx="30" cy="30" r="3" fill="white" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#ctaPattern)" />
+          </svg>
+        </div>
+
+        {/* Animated circles */}
+        <div className="absolute top-10 right-10 w-64 h-64 bg-yellow-300 rounded-full opacity-20 blur-3xl animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-64 h-64 bg-red-400 rounded-full opacity-20 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+              <Sparkles className="w-5 h-5" />
+              <span>Rejoins la communauté</span>
+            </div>
+
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              Prêt à commencer ton aventure?
+            </h2>
+
+            <p className="text-lg md:text-xl mb-6 text-green-50">
+              Inscris-toi maintenant et profite de <strong className="text-yellow-300">20% de réduction</strong> sur ta première commande!
+            </p>
+
+            {/* Email signup form */}
+            <div className="max-w-xl mx-auto">
+              <div className="flex flex-col sm:flex-row gap-4 bg-white rounded-full p-2 shadow-2xl">
+                <input
+                  type="email"
+                  placeholder="Ton adresse email..."
+                  className="flex-1 h-14 border-0 bg-transparent text-gray-800 placeholder:text-gray-500 focus:outline-none text-lg px-6"
+                />
+                <Button asChild size="lg" className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white h-14 px-8 rounded-full shadow-lg">
+                  <Link href="/register">
+                    Commencer
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Link>
                 </Button>
               </div>
+
+              <p className="text-sm text-green-100 mt-4">
+                En t&apos;inscrivant, tu acceptes nos conditions d&apos;utilisation et notre politique de confidentialité
+              </p>
+            </div>
+
+            {/* Social proof */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-green-50">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white flex items-center justify-center">👨‍🎓</div>
+                  <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white flex items-center justify-center">👩‍🎓</div>
+                  <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white flex items-center justify-center">👨‍💼</div>
+                </div>
+                <span>+50K étudiants inscrits</span>
+              </div>
+              <div className="hidden md:block w-px h-8 bg-white/30" />
+              <div>⭐⭐⭐⭐⭐ 4.9/5 sur 2,000+ avis</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-white relative overflow-hidden">
-        {/* Algerian Pattern in footer */}
-        <div className="absolute inset-0 algerian-pattern opacity-5" />
+      {/* Footer - Figma Style */}
+      <footer className="bg-gradient-to-br from-gray-900 via-green-900 to-gray-900 text-white pt-16 pb-8 relative overflow-hidden">
+        {/* Decorative pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <svg className="w-full h-full">
+            <defs>
+              <pattern id="footerPattern" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+                <path d="M 25 10 L 35 20 L 40 10 L 40 20 L 35 25 L 40 30 L 40 40 L 35 30 L 25 40 L 15 30 L 10 40 L 10 30 L 15 25 L 10 20 L 10 10 L 15 20 Z" fill="white" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#footerPattern)" />
+          </svg>
+        </div>
 
-        <div className="h-1.5 bg-gradient-to-r from-emerald-500 via-white to-red-500" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            {/* About */}
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                  <span className="text-white font-bold">RO</span>
-                </div>
-                <div>
-                  <span className="text-xl font-bold">Line</span>
-                  <span className="text-red-400 ml-1 text-xs font-bold">DZ</span>
-                </div>
+              <div className="mb-4">
+                <img src="/logos/transparent-logo.png" alt="RO Line" className="h-12 w-auto" />
               </div>
-              <p className="text-gray-400 text-sm">Le marketplace des étudiants algériens.</p>
+              <p className="text-gray-300 mb-6">
+                La première plateforme de marketplace dédiée aux étudiants algériens. Achète, vends et échange en toute sécurité.
+              </p>
+              <div className="flex gap-3">
+                <a href="#" className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">📱</a>
+                <a href="#" className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">📷</a>
+                <a href="#" className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">🐦</a>
+              </div>
             </div>
+
+            {/* Quick Links */}
             <div>
-              <h4 className="font-bold mb-4 text-emerald-400">Marketplace</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><Link href="/marketplace" className="hover:text-white transition-colors">Tous les produits</Link></li>
-                <li><Link href="/marketplace?category=1" className="hover:text-white transition-colors">Électronique</Link></li>
-                <li><Link href="/marketplace?category=2" className="hover:text-white transition-colors">Livres</Link></li>
+              <h4 className="text-xl font-bold mb-4 text-white">Liens Rapides</h4>
+              <ul className="space-y-3 text-gray-300">
+                <li><Link href="#" className="hover:text-green-400 transition-colors">À propos</Link></li>
+                <li><Link href="#" className="hover:text-green-400 transition-colors">Comment ça marche</Link></li>
+                <li><Link href="#" className="hover:text-green-400 transition-colors">Nos services</Link></li>
+                <li><Link href="#" className="hover:text-green-400 transition-colors">Blog</Link></li>
               </ul>
             </div>
+
+            {/* Categories */}
             <div>
-              <h4 className="font-bold mb-4 text-red-400">Compte</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><Link href="/register" className="hover:text-white transition-colors">S&apos;inscrire</Link></li>
-                <li><Link href="/login" className="hover:text-white transition-colors">Se connecter</Link></li>
-                <li><Link href="/sell" className="hover:text-white transition-colors">Vendre</Link></li>
+              <h4 className="text-xl font-bold mb-4 text-white">Catégories</h4>
+              <ul className="space-y-3 text-gray-300">
+                <li><Link href="/marketplace?category=2" className="hover:text-green-400 transition-colors">Livres & Manuels</Link></li>
+                <li><Link href="/marketplace?category=1" className="hover:text-green-400 transition-colors">Électronique</Link></li>
+                <li><Link href="/marketplace" className="hover:text-green-400 transition-colors">Informatique</Link></li>
+                <li><Link href="/marketplace" className="hover:text-green-400 transition-colors">Fournitures</Link></li>
               </ul>
             </div>
+
+            {/* Contact */}
             <div>
-              <h4 className="font-bold mb-4">Paiements</h4>
-              <div className="flex flex-wrap gap-2">
-                <div className="bg-emerald-800/50 px-3 py-1.5 rounded-lg text-xs font-medium">Edahabia</div>
-                <div className="bg-red-800/50 px-3 py-1.5 rounded-lg text-xs font-medium">CIB</div>
-                <div className="bg-gray-800 px-3 py-1.5 rounded-lg text-xs font-medium">Cash</div>
-              </div>
+              <h4 className="text-xl font-bold mb-4 text-white">Contact</h4>
+              <ul className="space-y-4 text-gray-300">
+                <li className="flex items-start gap-3">
+                  <span className="text-green-400">📍</span>
+                  <span>Alger Centre, Algérie</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="text-green-400">📞</span>
+                  <span>+213 555 123 456</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="text-green-400">✉️</span>
+                  <span>contact@roline.dz</span>
+                </li>
+              </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
-            <p>© 2024 RO Line v0.1 - Fait avec ❤️ en Algérie 🇩🇿</p>
+
+          {/* Bottom bar */}
+          <div className="pt-8 border-t border-white/10">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 text-sm">
+              <p>© 2025 RO Line v0.1. Tous droits réservés. 🇩🇿</p>
+              <div className="flex gap-6">
+                <Link href="#" className="hover:text-green-400 transition-colors">Conditions d&apos;utilisation</Link>
+                <Link href="#" className="hover:text-green-400 transition-colors">Politique de confidentialité</Link>
+                <Link href="#" className="hover:text-green-400 transition-colors">Aide & Support</Link>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

@@ -457,3 +457,107 @@ export async function toggleEventFeatured(eventId: string): Promise<ActionResult
 
   return success(undefined)
 }
+
+/**
+ * Get user's registered events
+ */
+export async function getUserRegisteredEvents(): Promise<EventWithDetails[]> {
+  const supabase = await createSupabaseServer()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return []
+
+  const { data, error } = await supabase
+    .from('event_registrations')
+    .select(`
+      registered_at,
+      status,
+      event:events(
+        *,
+        category:categories(id, name),
+        wilaya:wilayas(id, name)
+      )
+    `)
+    .eq('user_id', user.id)
+    .neq('status', 'cancelled')
+    .order('registered_at', { ascending: false })
+
+  if (error) {
+    console.error('Failed to fetch registered events:', error.message)
+    return []
+  }
+
+  type RegistrationRow = {
+    registered_at: string
+    status: string
+    event: EventWithDetails
+  }
+
+  return ((data as RegistrationRow[] | null) || [])
+    .filter(item => item.event)
+    .map(item => item.event)
+}
+
+/**
+ * Register for an event
+ */
+export async function registerForEvent(eventId: string): Promise<ActionResult<void>> {
+  const supabase = await createSupabaseServer()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return failure('Non authentifié')
+  }
+
+  const { data: existing } = await supabase
+    .from('event_registrations')
+    .select('id, status')
+    .eq('event_id', eventId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (existing && existing.status !== 'cancelled') {
+    return failure('Déjà inscrit')
+  }
+
+  const { error } = await supabase
+    .from('event_registrations')
+    .upsert({
+      event_id: eventId,
+      user_id: user.id,
+      status: 'registered',
+      registered_at: new Date().toISOString(),
+    } as never)
+
+  if (error) {
+    return failure(error.message)
+  }
+
+  revalidatePath('/dashboard')
+  return success(undefined)
+}
+
+/**
+ * Cancel event registration
+ */
+export async function cancelEventRegistration(eventId: string): Promise<ActionResult<void>> {
+  const supabase = await createSupabaseServer()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return failure('Non authentifié')
+  }
+
+  const { error } = await supabase
+    .from('event_registrations')
+    .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+    .eq('event_id', eventId)
+    .eq('user_id', user.id)
+
+  if (error) {
+    return failure(error.message)
+  }
+
+  revalidatePath('/dashboard')
+  return success(undefined)
+}

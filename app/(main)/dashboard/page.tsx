@@ -6,6 +6,11 @@ import { getCurrentUser } from '@/features/auth/actions/auth.actions'
 import { MerchantProductsList } from '@/features/marketplace/components/MerchantProductsList'
 import { MerchantCouponsList } from '@/features/coupons/components/MerchantCouponsList'
 import { MerchantEventsList } from '@/features/events/components/MerchantEventsList'
+import { StudentEventsList } from '@/features/events/components/StudentEventsList'
+import { StudentCouponsList } from '@/features/coupons/components/StudentCouponsList'
+import { FeaturedProductsSection } from '@/features/marketplace/components/FeaturedProductsSection'
+import { LatestProductsSection } from '@/features/marketplace/components/LatestProductsSection'
+import { RelatedProductsSection } from '@/features/marketplace/components/RelatedProductsSection'
 import { Badge } from '@/shared/components/ui/badge'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -90,6 +95,21 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* Featured Products */}
+      <Suspense fallback={<LoadingSkeleton />}>
+        <FeaturedProductsSection />
+      </Suspense>
+
+      {/* Related Products (Pour Vous) */}
+      <Suspense fallback={<LoadingSkeleton />}>
+        <RelatedProductsSection />
+      </Suspense>
+
+      {/* Latest Products (Dernières Annonces) */}
+      <Suspense fallback={<LoadingSkeleton />}>
+        <LatestProductsSection />
+      </Suspense>
+
       {/* Merchant Sections */}
       {isMerchant && (
         <>
@@ -128,6 +148,37 @@ export default async function DashboardPage() {
             <div className="glass rounded-2xl p-6">
               <Suspense fallback={<LoadingSkeleton />}>
                 <MerchantEventsList />
+              </Suspense>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Student Sections */}
+      {!isMerchant && (
+        <>
+          {/* My Events */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-6 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full" />
+              <h2 className="text-lg font-bold text-foreground">Mes événements</h2>
+            </div>
+            <div className="glass rounded-2xl p-6">
+              <Suspense fallback={<LoadingSkeleton />}>
+                <StudentEventsList />
+              </Suspense>
+            </div>
+          </div>
+
+          {/* My Coupons */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-6 bg-gradient-to-b from-red-400 to-red-600 rounded-full" />
+              <h2 className="text-lg font-bold text-foreground">Mes coupons</h2>
+            </div>
+            <div className="glass rounded-2xl p-6">
+              <Suspense fallback={<LoadingSkeleton />}>
+                <StudentCouponsList />
               </Suspense>
             </div>
           </div>
