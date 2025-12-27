@@ -115,9 +115,9 @@ export async function createPromotionPurchase(
     await activatePromotion(itemId, itemType, pkgTyped.tier, pkgTyped.duration_days, purchaseTyped.id)
 
     const redirectMap = {
-      product: `/sell?promoted=${itemId}`,
-      coupon: `/dashboard/coupons?promoted=${itemId}`,
-      event: `/dashboard/events?promoted=${itemId}`,
+      product: `/dashboard?promoted=${itemId}`,
+      coupon: `/dashboard?promoted=${itemId}`,
+      event: `/dashboard?promoted=${itemId}`,
     }
     return success({ checkoutUrl: redirectMap[itemType] })
   }
