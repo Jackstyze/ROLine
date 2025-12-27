@@ -1,11 +1,14 @@
 /**
- * Main App Layout (authenticated pages)
+ * Main App Layout (authenticated pages) - v0.1
  */
 
 import { getCurrentUser } from '@/features/auth/actions/auth.actions'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { signOut } from '@/features/auth/actions/auth.actions'
+import { Button } from '@/shared/components/ui/button'
+import { Badge } from '@/shared/components/ui/badge'
+import { Store, ShoppingBag, Package, User, LogOut } from 'lucide-react'
 
 export default async function MainLayout({
   children,
@@ -18,58 +21,68 @@ export default async function MainLayout({
     redirect('/login')
   }
 
+  const isMerchant = user.profile?.role === 'merchant'
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b-4 border-red-500 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/dashboard" className="flex items-center gap-2">
-              <span className="text-xl font-bold text-blue-600">RO Line</span>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <span className="text-white font-bold">RO</span>
+              </div>
+              <div>
+                <span className="text-xl font-bold text-foreground">Line</span>
+                <span className="text-xs text-red-500 ml-1 font-bold">DZ</span>
+              </div>
             </Link>
 
             {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-6">
-              <Link
-                href="/marketplace"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Marketplace
-              </Link>
-              {user.profile?.role === 'merchant' && (
-                <Link
-                  href="/sell"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Vendre
+            <nav className="hidden md:flex items-center gap-1">
+              <Button asChild variant="ghost" className="text-muted-foreground hover:text-primary">
+                <Link href="/marketplace">
+                  <Store className="w-4 h-4 mr-2" />
+                  Marketplace
                 </Link>
+              </Button>
+              {isMerchant && (
+                <Button asChild variant="ghost" className="text-muted-foreground hover:text-primary">
+                  <Link href="/sell">
+                    <Package className="w-4 h-4 mr-2" />
+                    Vendre
+                  </Link>
+                </Button>
               )}
-              <Link
-                href="/orders"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Commandes
-              </Link>
+              <Button asChild variant="ghost" className="text-muted-foreground hover:text-primary">
+                <Link href="/orders">
+                  <ShoppingBag className="w-4 h-4 mr-2" />
+                  Commandes
+                </Link>
+              </Button>
             </nav>
 
             {/* User menu */}
             <div className="flex items-center gap-4">
-              <div className="text-sm">
-                <p className="font-medium text-gray-900">
-                  {user.profile?.full_name || user.email}
-                </p>
-                <p className="text-gray-500 capitalize">
-                  {user.profile?.role || 'student'}
-                </p>
-              </div>
+              <Link href="/profile" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
+                  <User className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div className="hidden sm:block text-sm text-right">
+                  <p className="font-medium text-foreground">
+                    {user.profile?.full_name || user.email?.split('@')[0]}
+                  </p>
+                  <Badge variant="outline" className="text-xs capitalize">
+                    {user.profile?.role || 'student'}
+                  </Badge>
+                </div>
+              </Link>
               <form action={signOut}>
-                <button
-                  type="submit"
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  Déconnexion
-                </button>
+                <Button type="submit" variant="ghost" size="icon" className="text-muted-foreground hover:text-red-500">
+                  <LogOut className="w-5 h-5" />
+                </Button>
               </form>
             </div>
           </div>

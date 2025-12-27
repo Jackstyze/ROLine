@@ -20,12 +20,12 @@ import {
 import { getCurrentUser } from '@/features/auth/actions/auth.actions'
 import { isMerchantOrAdmin } from '@/shared/lib/auth/authorization'
 import { parseStringArray } from '@/shared/lib/utils/json'
-import type { Insertable, Updatable } from '@/shared/types/database.types'
+import type { TablesInsert, TablesUpdate } from '@/shared/types/database.types'
 import { success, failure, type ActionResult } from '@/shared/types/actions.types'
 
 // Product insert type
-type ProductInsert = Insertable<'products'>
-type ProductUpdate = Updatable<'products'>
+type ProductInsert = TablesInsert<'products'>
+type ProductUpdate = TablesUpdate<'products'>
 
 export type Product = {
   id: string

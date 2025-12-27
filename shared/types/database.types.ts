@@ -1,4 +1,3 @@
-Initialising login role...
 export type Json =
   | string
   | number
@@ -1000,3 +999,13 @@ export const Constants = {
     },
   },
 } as const
+
+// Helper types for database operations
+export type Insertable<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Insert']
+
+export type Updatable<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Update']
+
+export type Selectable<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row']

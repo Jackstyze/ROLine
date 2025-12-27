@@ -21,7 +21,7 @@ export const EventCreateSchema = z.object({
   titleAr: z.string().max(MAX_TITLE_LENGTH, 'Titre arabe trop long').optional().nullable(),
   description: z.string().max(MAX_DESCRIPTION_LENGTH, 'Description trop longue').optional().nullable(),
   categoryId: z.number().int().positive('Sélectionnez une catégorie').optional().nullable(),
-  startDate: z.coerce.date({ required_error: 'Date de début requise' }),
+  startDate: z.coerce.date({ error: 'Date de début requise' }),
   endDate: z.coerce.date().optional().nullable(),
   locationName: z.string().min(1, 'Lieu requis').max(200, 'Nom du lieu trop long'),
   locationAddress: z.string().max(500, 'Adresse trop longue').optional().nullable(),

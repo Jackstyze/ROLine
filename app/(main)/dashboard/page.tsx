@@ -1,137 +1,147 @@
 /**
- * Dashboard Page
+ * Dashboard Page - v0.1
  */
 
 import { getCurrentUser } from '@/features/auth/actions/auth.actions'
 import { MerchantProductsList } from '@/features/marketplace/components/MerchantProductsList'
 import { MerchantCouponsList } from '@/features/coupons/components/MerchantCouponsList'
 import { MerchantEventsList } from '@/features/events/components/MerchantEventsList'
+import { Badge } from '@/shared/components/ui/badge'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { Store, Package, Tag, Calendar, User, Sparkles } from 'lucide-react'
 
 export const metadata = {
   title: 'Dashboard | RO Line',
   description: 'Votre tableau de bord RO Line',
 }
 
+const QUICK_ACTIONS = [
+  { href: '/marketplace', icon: Store, label: 'Marketplace', desc: 'Découvrir les produits', color: 'emerald', forMerchant: false },
+  { href: '/orders', icon: Package, label: 'Mes commandes', desc: 'Suivre vos achats', color: 'emerald', forMerchant: false },
+  { href: '/sell', icon: Sparkles, label: 'Vendre', desc: 'Publier un produit', color: 'red', forMerchant: true },
+  { href: '/dashboard/coupons/new', icon: Tag, label: 'Coupons', desc: 'Créer des promos', color: 'red', forMerchant: true },
+  { href: '/dashboard/events/new', icon: Calendar, label: 'Événements', desc: 'Créer un événement', color: 'emerald', forMerchant: true },
+  { href: '/profile', icon: User, label: 'Mon profil', desc: 'Gérer vos infos', color: 'emerald', forMerchant: false },
+]
+
 export default async function DashboardPage() {
   const user = await getCurrentUser()
-
   const isMerchant = user?.profile?.role === 'merchant'
+
+  const actions = QUICK_ACTIONS.filter(action => !action.forMerchant || isMerchant)
 
   return (
     <div className="space-y-8">
-      {/* Welcome */}
+      {/* Welcome Header */}
+      <div className="glass rounded-2xl p-6 relative overflow-hidden">
+        <div className="absolute inset-0 algerian-pattern opacity-[0.03]" />
+        <div className="relative flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <span className="text-2xl text-white font-bold">
+              {user?.profile?.full_name?.[0]?.toUpperCase() || 'U'}
+            </span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-2xl font-bold text-foreground">
+                Bienvenue, {user?.profile?.full_name || 'Utilisateur'} !
+              </h1>
+              <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
+                {user?.profile?.role === 'merchant' ? 'Vendeur' : 'Étudiant'}
+              </Badge>
+            </div>
+            <p className="text-muted-foreground">
+              Votre tableau de bord RO Line v0.1
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Bienvenue, {user?.profile?.full_name || 'Utilisateur'} !
-        </h1>
-        <p className="text-gray-600">
-          Votre tableau de bord RO Line
-        </p>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-1 h-6 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full" />
+          <h2 className="text-lg font-bold text-foreground">Actions rapides</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {actions.map((action) => {
+            const Icon = action.icon
+            return (
+              <Link
+                key={action.href}
+                href={action.href}
+                className={`group block p-5 bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${
+                  action.color === 'emerald' ? 'hover:border-emerald-200' : 'hover:border-red-200'
+                }`}
+              >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-transform group-hover:scale-110 ${
+                  action.color === 'emerald'
+                    ? 'bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600'
+                    : 'bg-gradient-to-br from-red-100 to-red-50 text-red-600'
+                }`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h3 className="font-semibold text-foreground text-sm">{action.label}</h3>
+                <p className="text-xs text-muted-foreground mt-1">{action.desc}</p>
+              </Link>
+            )
+          })}
+        </div>
       </div>
 
-      {/* Quick actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Marketplace */}
-        <Link
-          href="/marketplace"
-          className="block p-6 bg-white rounded-lg border border-gray-200 hover:border-blue-500 transition-colors"
-        >
-          <span className="text-3xl mb-4 block">🛒</span>
-          <h3 className="font-medium text-gray-900">Marketplace</h3>
-          <p className="text-sm text-gray-500">
-            Découvrir les produits et offres
-          </p>
-        </Link>
-
-        {/* Orders */}
-        <Link
-          href="/orders"
-          className="block p-6 bg-white rounded-lg border border-gray-200 hover:border-blue-500 transition-colors"
-        >
-          <span className="text-3xl mb-4 block">📦</span>
-          <h3 className="font-medium text-gray-900">Mes commandes</h3>
-          <p className="text-sm text-gray-500">
-            Suivre vos achats
-          </p>
-        </Link>
-
-        {/* Sell (Merchants only) */}
-        {isMerchant && (
-          <Link
-            href="/sell"
-            className="block p-6 bg-white rounded-lg border border-gray-200 hover:border-green-500 transition-colors"
-          >
-            <span className="text-3xl mb-4 block">💰</span>
-            <h3 className="font-medium text-gray-900">Vendre</h3>
-            <p className="text-sm text-gray-500">
-              Publier un nouveau produit
-            </p>
-          </Link>
-        )}
-
-        {/* Coupons (Merchants only) */}
-        {isMerchant && (
-          <Link
-            href="/dashboard/coupons/new"
-            className="block p-6 bg-white rounded-lg border border-gray-200 hover:border-purple-500 transition-colors"
-          >
-            <span className="text-3xl mb-4 block">🎟️</span>
-            <h3 className="font-medium text-gray-900">Coupons</h3>
-            <p className="text-sm text-gray-500">
-              Creer des codes promo
-            </p>
-          </Link>
-        )}
-
-        {/* Events (Merchants only) */}
-        {isMerchant && (
-          <Link
-            href="/dashboard/events/new"
-            className="block p-6 bg-white rounded-lg border border-gray-200 hover:border-indigo-500 transition-colors"
-          >
-            <span className="text-3xl mb-4 block">📅</span>
-            <h3 className="font-medium text-gray-900">Evenements</h3>
-            <p className="text-sm text-gray-500">
-              Creer un evenement
-            </p>
-          </Link>
-        )}
-
-        {/* Profile */}
-        <Link
-          href="/profile"
-          className="block p-6 bg-white rounded-lg border border-gray-200 hover:border-blue-500 transition-colors"
-        >
-          <span className="text-3xl mb-4 block">👤</span>
-          <h3 className="font-medium text-gray-900">Mon profil</h3>
-          <p className="text-sm text-gray-500">
-            Gérer vos informations
-          </p>
-        </Link>
-      </div>
-
-      {/* Merchant Products */}
+      {/* Merchant Sections */}
       {isMerchant && (
-        <Suspense fallback={<div className="bg-white rounded-lg border p-6 animate-pulse">Chargement...</div>}>
-          <MerchantProductsList />
-        </Suspense>
-      )}
+        <>
+          {/* Products */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-6 bg-gradient-to-b from-red-400 to-red-600 rounded-full" />
+              <h2 className="text-lg font-bold text-foreground">Mes produits</h2>
+            </div>
+            <div className="glass rounded-2xl p-6">
+              <Suspense fallback={<LoadingSkeleton />}>
+                <MerchantProductsList />
+              </Suspense>
+            </div>
+          </div>
 
-      {/* Merchant Coupons */}
-      {isMerchant && (
-        <Suspense fallback={<div className="bg-white rounded-lg border p-6 animate-pulse">Chargement...</div>}>
-          <MerchantCouponsList />
-        </Suspense>
-      )}
+          {/* Coupons */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-6 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full" />
+              <h2 className="text-lg font-bold text-foreground">Mes coupons</h2>
+            </div>
+            <div className="glass rounded-2xl p-6">
+              <Suspense fallback={<LoadingSkeleton />}>
+                <MerchantCouponsList />
+              </Suspense>
+            </div>
+          </div>
 
-      {/* Merchant Events */}
-      {isMerchant && (
-        <Suspense fallback={<div className="bg-white rounded-lg border p-6 animate-pulse">Chargement...</div>}>
-          <MerchantEventsList />
-        </Suspense>
+          {/* Events */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-6 bg-gradient-to-b from-red-400 to-red-600 rounded-full" />
+              <h2 className="text-lg font-bold text-foreground">Mes événements</h2>
+            </div>
+            <div className="glass rounded-2xl p-6">
+              <Suspense fallback={<LoadingSkeleton />}>
+                <MerchantEventsList />
+              </Suspense>
+            </div>
+          </div>
+        </>
       )}
+    </div>
+  )
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4">
+      <div className="h-4 bg-gray-100 rounded-full w-1/4" />
+      <div className="h-20 bg-gray-100 rounded-xl" />
     </div>
   )
 }
