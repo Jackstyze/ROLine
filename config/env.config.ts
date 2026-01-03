@@ -33,6 +33,19 @@ const envSchema = z.object({
   CHARGILY_API_KEY: z.string().optional(),
   CHARGILY_SECRET_KEY: z.string().optional(),
   CHARGILY_MODE: z.enum(['test', 'live']).optional(),
+
+  // Cohere API (for semantic search embeddings)
+  COHERE_API_KEY: z.string().min(1, {
+    message: 'COHERE_API_KEY is required for semantic search',
+  }).optional(),
+
+  // ML Service (Railway - for classification and recommendations)
+  ML_SERVICE_URL: z.string().url({
+    message: 'ML_SERVICE_URL must be a valid URL',
+  }).optional(),
+  ML_SERVICE_API_KEY: z.string().min(1, {
+    message: 'ML_SERVICE_API_KEY is required for ML service auth',
+  }).optional(),
 })
 
 // Type inference
@@ -47,6 +60,9 @@ const fieldSchemas: Record<keyof EnvConfig, z.ZodTypeAny> = {
   CHARGILY_API_KEY: envSchema.shape.CHARGILY_API_KEY,
   CHARGILY_SECRET_KEY: envSchema.shape.CHARGILY_SECRET_KEY,
   CHARGILY_MODE: envSchema.shape.CHARGILY_MODE,
+  COHERE_API_KEY: envSchema.shape.COHERE_API_KEY,
+  ML_SERVICE_URL: envSchema.shape.ML_SERVICE_URL,
+  ML_SERVICE_API_KEY: envSchema.shape.ML_SERVICE_API_KEY,
 }
 
 // Mapping from our config keys to actual env var names
@@ -58,6 +74,9 @@ const envVarMapping: Record<keyof EnvConfig, string> = {
   CHARGILY_API_KEY: 'CHARGILY_API_KEY',
   CHARGILY_SECRET_KEY: 'CHARGILY_SECRET_KEY',
   CHARGILY_MODE: 'CHARGILY_MODE',
+  COHERE_API_KEY: 'COHERE_API_KEY',
+  ML_SERVICE_URL: 'ML_SERVICE_URL',
+  ML_SERVICE_API_KEY: 'ML_SERVICE_API_KEY',
 }
 
 // Cache for validated values
@@ -146,6 +165,9 @@ export function validateAllEnvVars(): void {
     CHARGILY_API_KEY: process.env.CHARGILY_API_KEY,
     CHARGILY_SECRET_KEY: process.env.CHARGILY_SECRET_KEY,
     CHARGILY_MODE: process.env.CHARGILY_MODE,
+    COHERE_API_KEY: process.env.COHERE_API_KEY,
+    ML_SERVICE_URL: process.env.ML_SERVICE_URL,
+    ML_SERVICE_API_KEY: process.env.ML_SERVICE_API_KEY,
   }
 
   const result = envSchema.safeParse(rawEnv)
@@ -177,3 +199,6 @@ export const getSupabaseUrl = () => envConfig.SUPABASE_URL
 export const getSupabaseAnonKey = () => envConfig.SUPABASE_ANON_KEY
 export const getSupabaseServiceRoleKey = () => envConfig.SUPABASE_SERVICE_ROLE_KEY
 export const getSiteUrl = () => envConfig.SITE_URL
+export const getCohereApiKey = () => envConfig.COHERE_API_KEY
+export const getMLServiceUrl = () => envConfig.ML_SERVICE_URL
+export const getMLServiceApiKey = () => envConfig.ML_SERVICE_API_KEY

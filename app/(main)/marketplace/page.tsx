@@ -14,6 +14,7 @@ import { OffersGrid } from '@/features/coupons/components/OffersGrid'
 import { OffersFilters } from '@/features/coupons/components/OffersFilters'
 import { EventsGrid } from '@/features/events/components/EventsGrid'
 import { EventsFilters } from '@/features/events/components/EventsFilters'
+import { UnifiedSearch } from '@/features/search/components/UnifiedSearch'
 import { Button } from '@/shared/components/ui/button'
 import { Badge } from '@/shared/components/ui/badge'
 import Link from 'next/link'
@@ -235,6 +236,14 @@ export default async function MarketplacePage({
             <p className="text-muted-foreground text-sm">{config.desc}</p>
           </div>
         </div>
+      </div>
+
+      {/* Unified Search */}
+      <div className="max-w-2xl">
+        <UnifiedSearch
+          placeholder="Rechercher produits, événements, offres..."
+          showEntityTabs={false}
+        />
       </div>
 
       {/* Tabs */}
